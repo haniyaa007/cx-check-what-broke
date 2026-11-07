@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Deployed-site checker: load a URL, capture evidence, diagnose with rules."""
+import os
 import argparse, ipaddress, json, re, socket, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,6 +11,21 @@ from playwright.sync_api import sync_playwright, Error as PWError
 
 SENSITIVE_KEY = re.compile(r"(token|key|secret|sig|auth|password|session)", re.I)
 MAX_ITEMS = 50
+
+
+def _launch(pw):
+    path = os.environ.get("WHATBROKE_BROWSER_PATH")
+    if path:
+        return pw.chromium.launch(executable_path=path)
+    ch = os.environ.get("WHATBROKE_BROWSER_CHANNEL")
+    errors = []
+    for c in ([ch] if ch else [None, "chrome", "msedge"]):
+        try:
+            return pw.chromium.launch(channel=c) if c else pw.chromium.launch()
+        except Exception as e:
+            errors.append(str(e).splitlines()[0])
+    raise RuntimeError("No usable browser found. Install Google Chrome or set "
+                       "WHATBROKE_BROWSER_PATH. Tried: " + " | ".join(errors))
 
 
 def redact_url(url):
@@ -56,8 +72,8 @@ def collect(url, out_dir, timeout_ms=30000, mobile=False, settle_ms=2000):
         return ev
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch()
-        opts = pw.devices["iPhone 13"] if mobile else {"viewport": {"width": 1366, "height": 768}}
+        browser = _launch(pw)
+        opts = {k: v for k, v in pw.devices["iPhone 13"].items() if k != "default_browser_type"} if mobile else {"viewport": {"width": 1366, "height": 768}}
         context = browser.new_context(**opts)
         page = context.new_page()
 
