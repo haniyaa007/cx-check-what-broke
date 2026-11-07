@@ -39,7 +39,7 @@ Every run is logged **locally** (SQLite in `~/.whatbroke`). CX Check What Broke 
 ## Quick start
 
 ```bash
-git clone https://github.com/<your-username>/cx-check-what-broke.git && cd cx-check-what-broke
+git clone https://github.com/haniyaa007/cx-check-what-broke.git && cd cx-check-what-broke
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
 playwright install chromium        # one time, ~150 MB, needed for browser/mobile checks
