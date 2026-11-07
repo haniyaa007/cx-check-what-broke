@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cx-check-what-broke"
+version = "0.1.0"
+description = "Open-source toolkit for CX engineers: end-to-end website checks and integration health checks."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = ["playwright>=1.47", "flask>=2.2", "requests>=2.31", "pyyaml>=6"]
+
+[project.scripts]
+whatbroke = "whatbroke.cli:main"
+
+[tool.setuptools]
+packages = ["whatbroke"]

@@ -1,0 +1,9 @@
+integrations:
+  - name: GitHub
+    api_status_url: https://www.githubstatus.com/api/v2/status.json   # Statuspage-style JSON
+    test_url: https://api.github.com/user          # any cheap authenticated endpoint
+    token_env: GITHUB_TOKEN                        # NAME of an env var; the token itself is never stored
+    scopes_header: X-OAuth-Scopes                  # read granted scopes from this response header
+    required_scopes: [repo, read:org]
+  - name: Orders webhook
+    webhook_url: https://example.com/hooks/orders
